@@ -25,6 +25,9 @@ class BandcampZipFile(ZipFile):
         if len(artist_album_info) == 2:
             self.artist: str = artist_album_info[0].title()
             self.album: str = artist_album_info[1].title()
+        elif len(artist_album_info) == 3 and artist_album_info[0] == artist_album_info[1]:
+            self.artist: str = artist_album_info[0].title()
+            self.album: str = artist_album_info[2].title()
         else:
             raise ValueError(f'Bad Bandcamp zipfile name, {self.filename}')
 
@@ -105,11 +108,16 @@ if __name__ == '__main__':
     print(__doc__)
     src = Path('zip')
     dest = Path('music')
-    for zf in src.iterdir():
-        try:
-            bczf = BandcampZipFile(zf)
-        except ValueError as err:
-            print(f'{err}\n')
-        else:
-            print(f'{bczf}\n')
-            bczf.extractall('music')
+    with open('bandcamp-extract.log', 'w') as logfile:
+        for zf in src.iterdir():
+            try:
+                bczf = BandcampZipFile(zf)
+            except ValueError as err:
+                message: str = f'[-] {err}'
+                print(message)
+                logfile.write(message)
+            else:
+                bczf.extractall('music')
+                message: str = f'[+] {bczf.filename}'
+                print(message)
+                logfile.write(message)
