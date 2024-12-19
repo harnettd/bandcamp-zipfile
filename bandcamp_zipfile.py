@@ -103,7 +103,13 @@ class BandcampZipFile(ZipFile):
 
 if __name__ == '__main__':
     print(__doc__)
-
-    bczf = BandcampZipFile('zip/Riot City - Burn The Night.zip')
-    print(bczf)
-    bczf.extractall(Path('music'))
+    src = Path('zip')
+    dest = Path('music')
+    for zf in src.iterdir():
+        try:
+            bczf = BandcampZipFile(zf)
+        except ValueError as err:
+            print(f'{err}\n')
+        else:
+            print(f'{bczf}\n')
+            bczf.extractall('music')
