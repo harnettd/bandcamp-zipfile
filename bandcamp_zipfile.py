@@ -107,17 +107,17 @@ class BandcampZipFile(ZipFile):
 if __name__ == '__main__':
     print(__doc__)
     src = Path('zip')
-    dest = Path('music')
+    dest = Path('flac')
     with open('bandcamp-extract.log', 'w') as logfile:
         for zf in src.iterdir():
-            try:
-                bczf = BandcampZipFile(zf)
-            except ValueError as err:
-                message: str = f'[-] {err}'
-                print(message)
-                logfile.write(message)
-            else:
-                bczf.extractall('music')
-                message: str = f'[+] {bczf.filename}'
-                print(message)
-                logfile.write(message)
+            if zf.suffix == '.zip':
+                try:
+                    bczf = BandcampZipFile(zf)
+                except ValueError as err:
+                    message: str = f'[-] {err}'
+                else:
+                    bczf.extractall(dest)
+                    message: str = f'[+] {bczf.filename}'
+                finally:
+                    print(message)
+                    logfile.write(message + '\n')
